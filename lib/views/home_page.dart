@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reports_app/services/auth_service.dart';
 
 import 'login_page.dart';
 
@@ -9,7 +11,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final storage = new FlutterSecureStorage();
+  FlutterSecureStorage get storage => GetIt.I<FlutterSecureStorage>();
+
   @override
   void initState() {
     super.initState();
