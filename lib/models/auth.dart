@@ -9,5 +9,6 @@ class Auth {
 
   Auth({this.userName, this.password});
 
+  factory Auth.fromJson(Map<String, dynamic> item) => _$AuthFromJson(item);
   Map<String, dynamic> toJson() => _$AuthToJson(this);
 }
