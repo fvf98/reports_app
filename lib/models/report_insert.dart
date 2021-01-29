@@ -9,13 +9,15 @@ class ReportInsert {
   String location;
   String description;
   List<String> images;
+  num author;
 
   ReportInsert(
       {this.title,
       this.issueType,
       this.location,
       this.description,
-      this.images});
+      this.images,
+      this.author});
 
   factory ReportInsert.fromJson(Map<String, dynamic> item) =>
       _$ReportInsertFromJson(item);

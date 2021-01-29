@@ -23,10 +23,8 @@ class ReportService extends BaseService {
       }
       return APIResponse<List<Report>>(
           error: true, message: 'An error occured');
-    }).catchError((error) {
-      print("outer: $error");
-      APIResponse<List<Report>>(error: true, message: 'An error occured');
-    });
+    }).catchError((_) =>
+        APIResponse<List<Report>>(error: true, message: 'An error occured'));
   }
 
   Future<APIResponse<Report>> getReport(String id) {
