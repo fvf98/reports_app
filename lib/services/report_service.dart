@@ -35,10 +35,10 @@ class ReportService extends BaseService {
   }
 
   Future<APIResponse<Report>> getReport(String id) {
-    return http.get(api + '/notes/' + id, headers: headers).then((data) {
+    return http.get(api + '/report/' + id, headers: headers).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
-        return APIResponse<Report>(data: Report.fromJson(jsonData));
+        return APIResponse<Report>(data: Report.fromJson(jsonData['data']));
       }
       return APIResponse<Report>(error: true, message: 'An error occured');
     }).catchError(
@@ -75,7 +75,7 @@ class ReportService extends BaseService {
             },
             body: json.encode(item.toJson()))
         .then((data) {
-      if (data.statusCode == 204) {
+      if (data.statusCode == 200) {
         return APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(error: true, message: 'An error occured');

@@ -217,13 +217,14 @@ class _HomePageState extends State<HomePage> {
                       subtitle: Text(
                           'Reportado el ${formatDateTime(_apiResponse.data[index].createdAt)}'),
                       onTap: () {
-                        /* Navigator.of(context)
-                        .push(MaterialPageRoute(
-                            builder: (_) => NoteModify(
-                                noteID: _apiResponse.data[index].noteID)))
-                        .then((data) {
-                      _fetchReports();
-                    }); */
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                                builder: (_) => ReportModify(
+                                    id: _apiResponse.data[index].id
+                                        .toString())))
+                            .then((data) {
+                          _fetchReports();
+                        });
                       },
                     ),
                   );

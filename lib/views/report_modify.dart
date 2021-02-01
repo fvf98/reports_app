@@ -7,6 +7,8 @@ import 'package:reports_app/models/report_insert.dart';
 import 'package:reports_app/services/issue_type_service.dart';
 import 'package:reports_app/services/report_service.dart';
 
+import 'color_loader.dart';
+
 class ReportModify extends StatefulWidget {
   final String id;
   ReportModify({this.id});
@@ -24,6 +26,7 @@ class _ReportModifyState extends State<ReportModify> {
   String message;
   Report report;
   APIResponse<List<IssueType>> _issues;
+  APIResponse<Report> _report;
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _issueTypeController = TextEditingController();
@@ -40,20 +43,9 @@ class _ReportModifyState extends State<ReportModify> {
       _isLoading = true;
     });
 
-    if (isEditing) {
-      reportService.getReport(widget.id).then((response) {
-        if (response.error) {
-          message = response.message ?? 'An error occurred';
-        }
-        report = response.data;
-        _titleController.text = report.title;
-        _locationController.text = report.location;
-        _descriptionController.text = report.description;
-        _descriptionController.text = report.description;
-      });
-    }
-
     _fetchIssues();
+
+    if (isEditing) _fetchReport();
 
     setState(() {
       _isLoading = false;
@@ -64,6 +56,16 @@ class _ReportModifyState extends State<ReportModify> {
     _issues = await issueTypeService.getIssueTypesList();
   }
 
+  _fetchReport() async {
+    _report = await reportService.getReport(widget.id);
+    report = _report.data;
+    _titleController.text = report.title;
+    _locationController.text = report.location;
+    _issueTypeId = report.issueType.id;
+    _issueTypeController.text = report.issueType.title;
+    _descriptionController.text = report.description;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +74,12 @@ class _ReportModifyState extends State<ReportModify> {
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(
+                child: Center(
+                    child: ColorLoader(
+                radius: 25.0,
+                dotRadius: 10.0,
+              )))
             : Column(
                 children: <Widget>[
                   TextField(
@@ -83,7 +90,7 @@ class _ReportModifyState extends State<ReportModify> {
                   TextField(
                     controller: _locationController,
                     decoration:
-                        InputDecoration(hintText: 'Ubicacion del reporte'),
+                        InputDecoration(hintText: 'Ubicacion del problema'),
                   ),
                   Container(height: 8),
                   TextField(
@@ -91,6 +98,7 @@ class _ReportModifyState extends State<ReportModify> {
                     readOnly: true,
                     showCursor: true,
                     decoration: InputDecoration(
+                      hintText: 'Tipo de problema',
                       suffixIcon: PopupMenuButton<IssueType>(
                         icon: const Icon(Icons.arrow_drop_down),
                         onSelected: (IssueType value) {
@@ -112,7 +120,7 @@ class _ReportModifyState extends State<ReportModify> {
                     controller: _descriptionController,
                     maxLines: 5,
                     decoration: InputDecoration(
-                      hintText: 'Descripcion del reporte',
+                      hintText: 'Descripcion del problema',
                     ),
                   ),
                   Container(height: 16),
@@ -124,14 +132,17 @@ class _ReportModifyState extends State<ReportModify> {
                           Text('Submit', style: TextStyle(color: Colors.white)),
                       color: Theme.of(context).primaryColor,
                       onPressed: () async {
-                        /* 
                         if (isEditing) {
                           setState(() {
                             _isLoading = true;
                           });
+
                           final report = ReportInsert(
-                              noteTitle: _titleController.text,
-                              noteContent: _contentController.text);
+                              title: _titleController.text,
+                              location: _locationController.text,
+                              images: [],
+                              issueType: _issueTypeId,
+                              description: _descriptionController.text);
                           final result = await reportService.updateReport(
                               widget.id, report);
 
@@ -142,7 +153,7 @@ class _ReportModifyState extends State<ReportModify> {
                           final title = result.error ? 'Error' : 'Done';
                           final text = result.error
                               ? (result.message ?? 'An error occurred')
-                              : 'Your reportwas updated';
+                              : 'Your reportwas edited';
 
                           showDialog(
                               context: context,
@@ -163,45 +174,47 @@ class _ReportModifyState extends State<ReportModify> {
                             }
                           });
                         } else {
-                          */
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        final report = ReportInsert(
-                            title: _titleController.text,
-                            location: _locationController.text,
-                            images: [],
-                            issueType: _issueTypeId,
-                            description: _descriptionController.text);
-                        final result = await reportService.createReport(report);
+                          setState(() {
+                            _isLoading = true;
+                          });
 
-                        setState(() {
-                          _isLoading = false;
-                        });
+                          final report = ReportInsert(
+                              title: _titleController.text,
+                              location: _locationController.text,
+                              images: [],
+                              issueType: _issueTypeId,
+                              description: _descriptionController.text);
+                          final result =
+                              await reportService.createReport(report);
 
-                        final title = result.error ? 'Error' : 'Done';
-                        final text = result.error
-                            ? (result.message ?? 'An error occurred')
-                            : 'Your reportwas created';
+                          setState(() {
+                            _isLoading = false;
+                          });
 
-                        showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                                  title: Text(title),
-                                  content: Text(text),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      child: Text('Ok'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                )).then((data) {
-                          if (result.data) {
-                            Navigator.of(context).pop();
-                          }
-                        });
+                          final title = result.error ? 'Error' : 'Done';
+                          final text = result.error
+                              ? (result.message ?? 'An error occurred')
+                              : 'Your reportwas created';
+
+                          showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                    title: Text(title),
+                                    content: Text(text),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  )).then((data) {
+                            if (result.data) {
+                              Navigator.of(context).pop();
+                            }
+                          });
+                        }
                       },
                     ),
                   )
