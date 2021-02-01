@@ -20,6 +20,14 @@ class AuthService extends BaseService {
           key: 'Token',
           value: jsonData['data']['accessToken'],
         );
+        await storage.write(
+          key: 'id',
+          value: jsonData['data']['user']['id'].toString(),
+        );
+        await storage.write(
+          key: 'roles',
+          value: jsonData['data']['user']['roles'],
+        );
         return APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(error: true, message: jsonData['message']);

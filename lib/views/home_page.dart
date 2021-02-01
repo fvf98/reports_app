@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reports_app/models/api_response.dart';
 import 'package:reports_app/models/report.dart';
 import 'package:reports_app/services/report_service.dart';
 import 'package:reports_app/views/report_delete.dart';
+import 'package:reports_app/views/report_modify.dart';
 
 import 'color_loader.dart';
 import 'login_page.dart';
@@ -54,6 +56,15 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  logOut() async {
+    await storage.delete(key: 'Token');
+    await storage.delete(key: 'id');
+    await storage.delete(key: 'roles');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
+        (Route<dynamic> route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -64,16 +75,49 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.blue[800]),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: SpeedDial(
+          // both default to 16
+          marginRight: 18,
+          marginBottom: 20,
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          // this is ignored if animatedIcon is non null
+          // child: Icon(Icons.add),
+          visible: true,
+          // If true user is forced to close dial manually
+          // by tapping main button and overlay is not rendered.
+          closeManually: false,
+          curve: Curves.bounceIn,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          onOpen: () => print('OPENING DIAL'),
+          onClose: () => print('DIAL CLOSED'),
+          tooltip: 'Speed Dial',
+          heroTag: 'speed-dial-hero-tag',
           backgroundColor: Colors.blue[800],
-          onPressed: () {
-            /* Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => NoteModify()))
-              .then((_) {
-            _fetchNotes();
-          }); */
-          },
-          child: Icon(Icons.add, color: Colors.white),
+          foregroundColor: Colors.white,
+          elevation: 8.0,
+          shape: CircleBorder(),
+          children: [
+            SpeedDialChild(
+              child: Icon(Icons.add),
+              backgroundColor: Colors.green[700],
+              label: 'Nuevo reporte',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (_) => ReportModify()))
+                    .then((_) => _fetchReports())
+              },
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.exit_to_app),
+              backgroundColor: Colors.red[900],
+              label: 'Cerrar sesion',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => logOut(),
+            ),
+          ],
         ),
         body: Container(
             width: MediaQuery.of(context).size.width,

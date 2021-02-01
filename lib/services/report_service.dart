@@ -10,8 +10,15 @@ import 'package:http/http.dart' as http;
 class ReportService extends BaseService {
   FlutterSecureStorage get storage => GetIt.I<FlutterSecureStorage>();
 
-  Future<APIResponse<List<Report>>> getReportsList() {
-    return http.get(api + '/report', headers: headers).then((data) {
+  Future<APIResponse<List<Report>>> getReportsList() async {
+    String roles = await storage.read(key: 'roles');
+    String url;
+    if (roles == 'Jefe de grupo') {
+      String id = await storage.read(key: 'id');
+      url = api + '/report/user/' + id;
+    } else
+      url = api + '/report';
+    return http.get(url, headers: headers).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
         final reports = <Report>[];

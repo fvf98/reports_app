@@ -27,6 +27,7 @@ dependencies:
   http: ^0.12.2
   json_serializable: ^3.5.1
   flutter_secure_storage: ^3.3.5
+  flutter_speed_dial: ^1.2.5
 
 
   # The following adds the Cupertino Icons font to your application.
