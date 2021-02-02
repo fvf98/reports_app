@@ -315,8 +315,10 @@ class _HomePageState extends State<HomePage> {
                         _reports[index].title,
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
-                      subtitle: Text(
-                          '''Problema de tipo: ${_reports[index].issueType.title}
+                      subtitle: Text(_reports[index].status == 'T'
+                          ? '''Problema de tipo: ${_reports[index].issueType.title}
+Solucionado el: ${formatDateTime(_reports[index].doneAt)}'''
+                          : '''Problema de tipo: ${_reports[index].issueType.title}
 Reportado el: ${formatDateTime(_reports[index].createdAt)}'''),
                       onTap: () {
                         Navigator.of(context)

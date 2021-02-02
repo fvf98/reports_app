@@ -12,6 +12,7 @@ class Report {
   String description;
   List<String> images;
   DateTime createdAt;
+  DateTime doneAt;
   IssueType issueType;
   User asigned;
   User author;
@@ -24,6 +25,7 @@ class Report {
       this.description,
       this.images,
       this.createdAt,
+      this.doneAt,
       this.issueType,
       this.asigned,
       this.author,

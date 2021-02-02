@@ -16,6 +16,9 @@ Report _$ReportFromJson(Map<String, dynamic> json) {
     createdAt: json['createdAt'] == null
         ? null
         : DateTime.parse(json['createdAt'] as String),
+    doneAt: json['doneAt'] == null
+        ? null
+        : DateTime.parse(json['doneAt'] as String),
     issueType: json['issueType'] == null
         ? null
         : IssueType.fromJson(json['issueType'] as Map<String, dynamic>),
@@ -36,6 +39,7 @@ Map<String, dynamic> _$ReportToJson(Report instance) => <String, dynamic>{
       'description': instance.description,
       'images': instance.images,
       'createdAt': instance.createdAt?.toIso8601String(),
+      'doneAt': instance.doneAt?.toIso8601String(),
       'issueType': instance.issueType,
       'asigned': instance.asigned,
       'author': instance.author,
