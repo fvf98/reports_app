@@ -162,13 +162,6 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   SpeedDialChild(
-                    child: Icon(Icons.help_outline),
-                    backgroundColor: Colors.white,
-                    label: 'Ayuda',
-                    labelStyle: TextStyle(fontSize: 18.0),
-                    onTap: () => logOut(),
-                  ),
-                  SpeedDialChild(
                     child: Icon(Icons.exit_to_app),
                     backgroundColor: Colors.red[900],
                     label: 'Cerrar sesion',
@@ -214,13 +207,6 @@ class _HomePageState extends State<HomePage> {
                     label: 'Mis reportes terminados',
                     labelStyle: TextStyle(fontSize: 18.0),
                     onTap: () => _filterReports('T'),
-                  ),
-                  SpeedDialChild(
-                    child: Icon(Icons.help_outline),
-                    backgroundColor: Colors.white,
-                    label: 'Ayuda',
-                    labelStyle: TextStyle(fontSize: 18.0),
-                    onTap: () => logOut(),
                   ),
                   SpeedDialChild(
                     child: Icon(Icons.exit_to_app),
