@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reports_app/models/api_response.dart';
 import 'package:reports_app/models/report.dart';
+import 'package:reports_app/models/report_assign.dart';
 import 'package:reports_app/models/report_insert.dart';
 import 'package:reports_app/services/base_servide.dart';
 import 'package:http/http.dart' as http;
@@ -12,9 +13,9 @@ class ReportService extends BaseService {
 
   Future<APIResponse<List<Report>>> getReportsList() async {
     String roles = await storage.read(key: 'roles');
+    String id = await storage.read(key: 'id');
     String url;
     if (roles == 'Jefe de grupo') {
-      String id = await storage.read(key: 'id');
       url = api + '/report/user/' + id;
     } else
       url = api + '/report';
@@ -29,9 +30,9 @@ class ReportService extends BaseService {
         return APIResponse<List<Report>>(data: reports);
       }
       return APIResponse<List<Report>>(
-          error: true, message: 'An error occured');
-    }).catchError((_) =>
-        APIResponse<List<Report>>(error: true, message: 'An error occured'));
+          error: true, message: 'Ha ocurrido un error');
+    }).catchError((_) => APIResponse<List<Report>>(
+        error: true, message: 'Ha ocurrido un error'));
   }
 
   Future<APIResponse<Report>> getReport(String id) {
@@ -40,9 +41,27 @@ class ReportService extends BaseService {
         final jsonData = json.decode(data.body);
         return APIResponse<Report>(data: Report.fromJson(jsonData['data']));
       }
-      return APIResponse<Report>(error: true, message: 'An error occured');
+      return APIResponse<Report>(error: true, message: 'Ha ocurrido un error');
+    }).catchError((_) =>
+        APIResponse<Report>(error: true, message: 'Ha ocurrido un error'));
+  }
+
+  Future<APIResponse<bool>> finishReport(String id) async {
+    String token = await storage.read(key: 'Token');
+    return http.get(
+      api + '/report/finish/' + id,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    ).then((data) {
+      if (data.statusCode == 200) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(error: true, message: 'Ha ocurrido un error');
     }).catchError(
-        (_) => APIResponse<Report>(error: true, message: 'An error occured'));
+        (_) => APIResponse<bool>(error: true, message: 'Ha ocurrido un error'));
   }
 
   Future<APIResponse<bool>> createReport(ReportInsert item) async {
@@ -59,9 +78,9 @@ class ReportService extends BaseService {
       if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);
       }
-      return APIResponse<bool>(error: true, message: 'An error occured');
-    }).catchError(
-            (_) => APIResponse<bool>(error: true, message: 'An error occured'));
+      return APIResponse<bool>(error: true, message: 'Ha ocurrido un error');
+    }).catchError((_) =>
+            APIResponse<bool>(error: true, message: 'Ha ocurrido un error'));
   }
 
   Future<APIResponse<bool>> updateReport(String id, ReportInsert item) async {
@@ -78,9 +97,31 @@ class ReportService extends BaseService {
       if (data.statusCode == 200) {
         return APIResponse<bool>(data: true);
       }
-      return APIResponse<bool>(error: true, message: 'An error occured');
-    }).catchError(
-            (_) => APIResponse<bool>(error: true, message: 'An error occured'));
+      return APIResponse<bool>(error: true, message: 'Ha ocurrido un error');
+    }).catchError((_) =>
+            APIResponse<bool>(error: true, message: 'Ha ocurrido un error'));
+  }
+
+  Future<APIResponse<bool>> assignReport(String id, ReportAssign item) async {
+    print('--------------------------');
+    print(id);
+    print(item.asigned);
+    String token = await storage.read(key: 'Token');
+    return http
+        .put(api + '/report/assign/' + id,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+            body: json.encode(item.toJson()))
+        .then((data) {
+      if (data.statusCode == 200) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(error: true, message: 'Ha ocurrido un error');
+    }).catchError((_) =>
+            APIResponse<bool>(error: true, message: 'Ha ocurrido un error'));
   }
 
   Future<APIResponse<bool>> deleteReport(String id) async {
@@ -93,8 +134,8 @@ class ReportService extends BaseService {
       if (data.statusCode == 200) {
         return APIResponse<bool>(data: true);
       }
-      return APIResponse<bool>(error: true, message: 'An error occured');
+      return APIResponse<bool>(error: true, message: 'Ha ocurrido un error');
     }).catchError(
-        (_) => APIResponse<bool>(error: true, message: 'An error occured'));
+        (_) => APIResponse<bool>(error: true, message: 'Ha ocurrido un error'));
   }
 }

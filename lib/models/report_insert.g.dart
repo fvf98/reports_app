@@ -8,12 +8,13 @@ part of 'report_insert.dart';
 
 ReportInsert _$ReportInsertFromJson(Map<String, dynamic> json) {
   return ReportInsert(
-      title: json['title'] as String,
-      issueType: json['issueType'] as num,
-      location: json['location'] as String,
-      description: json['description'] as String,
-      images: (json['images'] as List)?.map((e) => e as String)?.toList(),
-      author: json['author'] as num);
+    title: json['title'] as String,
+    issueType: json['issueType'] as num,
+    location: json['location'] as String,
+    description: json['description'] as String,
+    images: (json['images'] as List)?.map((e) => e as String)?.toList(),
+    author: json['author'] as num,
+  );
 }
 
 Map<String, dynamic> _$ReportInsertToJson(ReportInsert instance) =>
