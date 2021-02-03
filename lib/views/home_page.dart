@@ -156,8 +156,10 @@ class _HomePageState extends State<HomePage> {
                     labelStyle: TextStyle(fontSize: 18.0),
                     onTap: () => {
                       Navigator.of(context)
-                          .push(
-                              MaterialPageRoute(builder: (_) => ReportModify()))
+                          .push(MaterialPageRoute(
+                              builder: (_) => ReportModify(
+                                    img: [],
+                                  )))
                           .then((_) => _fetchReports('ALL'))
                     },
                   ),
@@ -324,9 +326,9 @@ Reportado el: ${formatDateTime(_reports[index].createdAt)}'''),
                         Navigator.of(context)
                             .push(MaterialPageRoute(
                                 builder: (_) => ReportModify(
-                                      id: _reports[index].id.toString(),
-                                      isJanitor: !_isGroupLeader,
-                                    )))
+                                    id: _reports[index].id.toString(),
+                                    isJanitor: !_isGroupLeader,
+                                    img: _reports[index].images)))
                             .then((data) {
                           _getData();
                         });

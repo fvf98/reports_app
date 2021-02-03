@@ -103,9 +103,6 @@ class ReportService extends BaseService {
   }
 
   Future<APIResponse<bool>> assignReport(String id, ReportAssign item) async {
-    print('--------------------------');
-    print(id);
-    print(item.asigned);
     String token = await storage.read(key: 'Token');
     return http
         .put(api + '/report/assign/' + id,
