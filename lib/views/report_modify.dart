@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -29,7 +30,6 @@ class ReportModify extends StatefulWidget {
 class _ReportModifyState extends State<ReportModify> {
   bool get isEditing => widget.id != null;
   bool get isJanitor => widget.isJanitor != null && widget.isJanitor != false;
-  bool get isImage => widget.img.length > 0;
 
   FlutterSecureStorage get storage => GetIt.I<FlutterSecureStorage>();
   ReportService get reportService => GetIt.I<ReportService>();
@@ -70,6 +70,7 @@ class _ReportModifyState extends State<ReportModify> {
   }
 
   upload(String fileName) {
+    Random rng = new Random();
     http.post(uploadEndPoint, body: {
       "image": base64Image,
       "name": fileName,
@@ -245,7 +246,7 @@ class _ReportModifyState extends State<ReportModify> {
                   SizedBox(
                     height: 20.0,
                   ),
-                  isImage
+                  widget.img.length > 0 && file == null
                       ? Flexible(
                           child: Image.network(
                             widget.img[0],
